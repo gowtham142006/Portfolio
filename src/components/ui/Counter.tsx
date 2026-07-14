@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 /* ================================================================
    COUNTER — Client Component
    Animated number counter that triggers when scrolled into view.
+   Uses requestAnimationFrame callback (async) to update display.
    ================================================================ */
 
 interface CounterProps {
@@ -30,31 +31,39 @@ export function Counter({
   useEffect(() => {
     if (!isInView) return;
 
+    // For reduced motion, use setTimeout (async) to set final value
     if (prefersReducedMotion) {
-      setDisplayValue(value);
-      return;
+      const id = setTimeout(() => setDisplayValue(value), 0);
+      return () => clearTimeout(id);
     }
 
     let startTime: number | null = null;
-    let animationFrame: number;
+    let frameId: number;
+    let cancelled = false;
 
-    function animate(timestamp: number) {
+    // requestAnimationFrame callbacks are async and don't trigger
+    // cascading renders — they batch naturally with the browser paint cycle.
+    function step(timestamp: number) {
+      if (cancelled) return;
       if (!startTime) startTime = timestamp;
       const elapsed = timestamp - startTime;
       const progress = Math.min(elapsed / (duration * 1000), 1);
-
       // Ease out cubic for smooth deceleration
       const eased = 1 - Math.pow(1 - progress, 3);
+
       setDisplayValue(Math.floor(eased * value));
 
       if (progress < 1) {
-        animationFrame = requestAnimationFrame(animate);
+        frameId = requestAnimationFrame(step);
       }
     }
 
-    animationFrame = requestAnimationFrame(animate);
+    frameId = requestAnimationFrame(step);
 
-    return () => cancelAnimationFrame(animationFrame);
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(frameId);
+    };
   }, [isInView, value, duration, prefersReducedMotion]);
 
   return (

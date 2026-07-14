@@ -1,28 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 
 /* ================================================================
    useMediaQuery
    Returns whether a CSS media query matches.
-   Useful for responsive behavior in JavaScript.
+   Uses useSyncExternalStore for React 19 compatibility.
    ================================================================ */
 
 export function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(query);
-    setMatches(mediaQuery.matches);
-
-    function handleChange(event: MediaQueryListEvent) {
-      setMatches(event.matches);
-    }
-
-    mediaQuery.addEventListener("change", handleChange);
-
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, [query]);
-
-  return matches;
+  return useSyncExternalStore(
+    (callback) => {
+      const mediaQuery = window.matchMedia(query);
+      mediaQuery.addEventListener("change", callback);
+      return () => mediaQuery.removeEventListener("change", callback);
+    },
+    () => window.matchMedia(query).matches,
+    () => false // Server snapshot
+  );
 }

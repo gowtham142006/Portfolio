@@ -1,28 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 
 /* ================================================================
    useReducedMotion
    Respects the user's prefers-reduced-motion system setting.
    All animation components check this before animating.
+   Uses useSyncExternalStore for React 19 compatibility.
    ================================================================ */
 
+const QUERY = "(prefers-reduced-motion: reduce)";
+
 export function useReducedMotion(): boolean {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setPrefersReducedMotion(mediaQuery.matches);
-
-    function handleChange(event: MediaQueryListEvent) {
-      setPrefersReducedMotion(event.matches);
-    }
-
-    mediaQuery.addEventListener("change", handleChange);
-
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
-
-  return prefersReducedMotion;
+  return useSyncExternalStore(
+    (callback) => {
+      const mediaQuery = window.matchMedia(QUERY);
+      mediaQuery.addEventListener("change", callback);
+      return () => mediaQuery.removeEventListener("change", callback);
+    },
+    () => window.matchMedia(QUERY).matches,
+    () => false // Server snapshot — assume motion is fine
+  );
 }

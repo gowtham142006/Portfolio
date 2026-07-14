@@ -3,7 +3,6 @@ import {
   Coffee,
   Brain,
   Cloud,
-  Award,
   Code2,
 } from "lucide-react";
 import type { Certification } from "@/types";
