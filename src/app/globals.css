@@ -1,26 +1,296 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ================================================================
+   DESIGN SYSTEM — Centralized Theme Tokens
+   All colors, typography, spacing, and effects defined here.
+   Components use Tailwind utilities that reference these tokens.
+   ================================================================ */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* --- Fonts --- */
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-space-grotesk);
+
+  /* --- Background layers --- */
+  --color-bg-primary: #030712;
+  --color-bg-surface: #111827;
+  --color-bg-card: #1F2937;
+  --color-bg-card-hover: #374151;
+
+  /* --- Light theme backgrounds --- */
+  --color-bg-primary-light: #FFFFFF;
+  --color-bg-surface-light: #F9FAFB;
+  --color-bg-card-light: #F3F4F6;
+  --color-bg-card-hover-light: #E5E7EB;
+
+  /* --- Brand colors --- */
+  --color-brand-primary: #3B82F6;
+  --color-brand-secondary: #8B5CF6;
+  --color-brand-accent: #06B6D4;
+  --color-brand-success: #10B981;
+
+  /* --- Text hierarchy (dark) --- */
+  --color-text-primary: #F9FAFB;
+  --color-text-secondary: #9CA3AF;
+  --color-text-muted: #6B7280;
+
+  /* --- Text hierarchy (light) --- */
+  --color-text-primary-light: #111827;
+  --color-text-secondary-light: #4B5563;
+  --color-text-muted-light: #9CA3AF;
+
+  /* --- Borders --- */
+  --color-border-default: #1F2937;
+  --color-border-hover: #374151;
+  --color-border-default-light: #E5E7EB;
+  --color-border-hover-light: #D1D5DB;
+
+  /* --- Radius --- */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius-full: 9999px;
+
+  /* --- Shadows --- */
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  --shadow-card-light: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+  --shadow-glow: 0 0 30px rgba(59, 130, 246, 0.15);
+  --shadow-glow-lg: 0 0 60px rgba(59, 130, 246, 0.2);
+  --shadow-glow-accent: 0 0 30px rgba(139, 92, 246, 0.15);
+
+  /* --- Z-index scale --- */
+  --z-base: 0;
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-overlay: 30;
+  --z-modal: 40;
+  --z-toast: 50;
+  --z-cursor: 60;
+  --z-loading: 70;
+
+  /* --- Spacing --- */
+  --spacing-section: 7rem;
+  --container-max: 80rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ================================================================
+   GLOBAL STYLES
+   ================================================================ */
+
+/* --- Base --- */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Dark theme (default) */
+:root,
+[data-theme="dark"] {
+  --background: var(--color-bg-primary);
+  --foreground: var(--color-text-primary);
+  --surface: var(--color-bg-surface);
+  --card: var(--color-bg-card);
+  --card-hover: var(--color-bg-card-hover);
+  --text-secondary: var(--color-text-secondary);
+  --text-muted: var(--color-text-muted);
+  --border: var(--color-border-default);
+  --border-hover: var(--color-border-hover);
+  --shadow-card-theme: var(--shadow-card);
+  color-scheme: dark;
+}
+
+/* Light theme */
+[data-theme="light"] {
+  --background: var(--color-bg-primary-light);
+  --foreground: var(--color-text-primary-light);
+  --surface: var(--color-bg-surface-light);
+  --card: var(--color-bg-card-light);
+  --card-hover: var(--color-bg-card-hover-light);
+  --text-secondary: var(--color-text-secondary-light);
+  --text-muted: var(--color-text-muted-light);
+  --border: var(--color-border-default-light);
+  --border-hover: var(--color-border-hover-light);
+  --shadow-card-theme: var(--shadow-card-light);
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ================================================================
+   CUSTOM SCROLLBAR
+   ================================================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-hover);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-hover) var(--background);
+}
+
+/* ================================================================
+   UTILITY CLASSES
+   ================================================================ */
+
+/* Glassmorphism effect */
+.glass {
+  background: rgba(17, 24, 39, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="light"] .glass {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Gradient border effect */
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-secondary));
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-accent {
+  background: linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Animated gradient background */
+.animated-gradient {
+  background: linear-gradient(
+    -45deg,
+    var(--color-brand-primary),
+    var(--color-brand-secondary),
+    var(--color-brand-accent),
+    var(--color-brand-primary)
+  );
+  background-size: 400% 400%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Glow effect on hover */
+.glow-hover {
+  transition: box-shadow 0.3s ease;
+}
+
+.glow-hover:hover {
+  box-shadow: var(--shadow-glow);
+}
+
+/* Focus visible ring */
+:focus-visible {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}
+
+/* Skip to content (accessibility) */
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  z-index: 100;
+  padding: 1rem 1.5rem;
+  background: var(--color-brand-primary);
+  color: white;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Section divider */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-border-default) 20%,
+    var(--color-brand-primary) 50%,
+    var(--color-border-default) 80%,
+    transparent
+  );
+  opacity: 0.5;
+}
+
+/* Background grid pattern */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+[data-theme="light"] .bg-grid {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
 }
