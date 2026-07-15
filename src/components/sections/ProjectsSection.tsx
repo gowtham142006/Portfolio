@@ -76,8 +76,9 @@ export function ProjectsSection() {
                   </Button>
                 )}
                 {project.demo && project.demo !== "#" && (
-                  <Button variant="ghost" size="sm" icon={ExternalLink} href={project.demo} target="_blank">
+                  <Button variant="ghost" size="sm" href={project.demo} target="_blank">
                     Demo
+                    <ExternalLink size={14} className="ml-1.5" />
                   </Button>
                 )}
               </div>
@@ -117,8 +118,9 @@ export function ProjectsSection() {
                     </Button>
                   )}
                   {project.demo && project.demo !== "#" && (
-                    <Button variant="ghost" size="sm" icon={ExternalLink} href={project.demo} target="_blank">
+                    <Button variant="ghost" size="sm" href={project.demo} target="_blank">
                       Demo
+                      <ExternalLink size={14} className="ml-1.5" />
                     </Button>
                   )}
                 </div>
