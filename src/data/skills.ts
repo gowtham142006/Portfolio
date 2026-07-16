@@ -23,6 +23,7 @@ export const skillCategories: readonly SkillCategory[] = [
       { name: "Python" },
       { name: "JavaScript" },
       { name: "TypeScript" },
+      { name: "C" },
     ],
   },
   {
@@ -42,6 +43,7 @@ export const skillCategories: readonly SkillCategory[] = [
       { name: "Node.js" },
       { name: "Supabase" },
       { name: "Firebase" },
+      { name: "REST APIs" },
     ],
   },
   {

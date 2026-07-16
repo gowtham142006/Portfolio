@@ -17,7 +17,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   return (
     <NextThemesProvider
       attribute="data-theme"
-      defaultTheme="dark"
+      defaultTheme="light"
       enableSystem={true}
       disableTransitionOnChange={false}
       storageKey="portfolio-theme"

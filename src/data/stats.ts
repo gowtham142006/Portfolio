@@ -14,7 +14,7 @@ import type { Stat } from "@/types";
 export const stats: readonly Stat[] = [
   {
     label: "Projects Built",
-    value: 10,
+    value: 4,
     suffix: "+",
     icon: FolderOpen,
   },
@@ -26,13 +26,19 @@ export const stats: readonly Stat[] = [
   },
   {
     label: "GitHub Repos",
-    value: 20,
+    value: 5,
     suffix: "+",
     icon: GitBranch,
   },
   {
     label: "Coding Hours",
     value: 1000,
+    suffix: "+",
+    icon: Clock,
+  },
+  {
+    label: "Years Learning",
+    value: 4,
     suffix: "+",
     icon: Clock,
   },

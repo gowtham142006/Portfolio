@@ -15,44 +15,42 @@ import type { Achievement } from "@/types";
 
 export const achievements: readonly Achievement[] = [
   {
-    title: "GitHub Streak",
-    description:
-      "Maintained a consistent coding streak on GitHub, contributing to personal and open-source projects daily.",
-    icon: GitBranch,
-    metric: "100+ Days",
-  },
+  title: "GitHub Learning Journey",
+  description:
+    "Consistently building personal projects and improving my development skills through hands-on coding and version control with GitHub.",
+  icon: GitBranch,
+  metric: "28 Days",
+},
   {
-    title: "Projects Completed",
-    description:
-      "Successfully designed, developed, and deployed multiple full-stack applications from concept to production.",
-    icon: Code2,
-    metric: "10+ Projects",
-  },
+  title: "Personal Projects",
+  description:
+    "Designed and built multiple software projects using Flutter, Next.js, React, and Supabase to strengthen my full-stack development skills.",
+  icon: Code2,
+  metric: "3+ Projects",
+},
   {
-    title: "Hackathon Participation",
-    description:
-      "Competed in multiple hackathons, building innovative solutions under tight deadlines and presenting to judges.",
-    icon: Trophy,
-    metric: "5+ Hackathons",
-  },
+  title: "Continuous Learning",
+  description:
+    "Actively learning modern technologies through personal projects, documentation, online courses, and hands-on experimentation.",
+  icon: Trophy,
+},
   {
     title: "LeetCode Problem Solving",
     description:
       "Solved algorithmic problems on LeetCode, improving problem-solving skills and understanding of data structures.",
     icon: Zap,
-    metric: "100+ Problems",
+    metric: "10+ Problems",
   },
   {
-    title: "Academic Excellence",
-    description:
-      "Maintained strong academic performance while actively pursuing self-directed learning in modern technologies.",
-    icon: Award,
-  },
+  title: "Engineering Student",
+  description:
+    "Pursuing a Bachelor of Engineering in Computer Science while building practical software projects and continuously improving development skills.",
+  icon: Award,
+},
   {
-    title: "Community Mentoring",
-    description:
-      "Mentored junior students in mobile app development and web technologies, helping them build their first projects.",
-    icon: Target,
-    metric: "10+ Students",
-  },
+  title: "AI & Full-Stack Development",
+  description:
+    "Focused on building AI-powered mobile and web applications using Flutter, Next.js, Supabase, and modern development tools.",
+  icon: Target,
+},
 ] as const;

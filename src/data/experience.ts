@@ -2,7 +2,6 @@ import {
   Rocket,
   Code2,
   Users,
-  Trophy,
   GraduationCap,
 } from "lucide-react";
 import type { TimelineEntry } from "@/types";
@@ -14,39 +13,41 @@ import type { TimelineEntry } from "@/types";
 
 export const experiences: readonly TimelineEntry[] = [
   {
-    title: "Personal Projects",
-    subtitle: "Self-directed Development",
-    date: "2024 — Present",
-    description:
-      "Building full-stack applications independently, focusing on Flutter mobile development and React/Next.js web applications. Developed 10+ projects including an AI-powered productivity app, real-time chat application, and virtual queue management system.",
-    tags: ["Flutter", "React", "Next.js", "AI", "Supabase"],
-    icon: Rocket,
-  },
+  title: "Personal Projects",
+  subtitle: "Self-directed Software Development",
+  date: "2025 — Present",
+  description:
+    "Designed and developed multiple personal projects to strengthen my skills in Flutter, React, Next.js, and backend development. Built applications including a Smart Productivity App, Chat Application, and Portfolio Website while learning modern software engineering practices.",
+  tags: [
+    "Flutter",
+    "Next.js",
+    "React",
+    "Supabase",
+    "TypeScript"
+  ],
+  icon: Rocket,
+},
   {
-    title: "Hackathon Participant",
-    subtitle: "Various Hackathons",
-    date: "2024 — Present",
-    description:
-      "Participated in multiple hackathons, solving real-world problems under time constraints. Developed innovative solutions in areas like healthcare, education, and productivity. Improved rapid prototyping and teamwork skills.",
-    tags: ["Problem Solving", "Teamwork", "Rapid Prototyping"],
-    icon: Trophy,
-  },
-  {
-    title: "Open Source Contributor",
-    subtitle: "GitHub Community",
-    date: "2024 — Present",
-    description:
-      "Contributing to open-source projects on GitHub, reviewing code, submitting pull requests, and maintaining personal repositories. Active in the Flutter and React developer communities.",
-    tags: ["Git", "GitHub", "Code Review", "Community"],
-    icon: Code2,
-  },
+  title: "Continuous Learning",
+  subtitle: "Self-Learning",
+  date: "2024 — Present",
+  description:
+    "Continuously improving my software development skills by building personal projects, solving coding problems, and learning modern frameworks including Flutter, React, Next.js, and Supabase.",
+  tags: [
+      "Flutter",
+      "React",
+      "Problem Solving",
+      "Self Learning"
+    ],
+  icon: Code2,
+},
   {
     title: "College Tech Activities",
     subtitle: "Kings Engineering College",
     date: "2023 — Present",
     description:
-      "Active participant in college technical events, coding competitions, and workshops. Mentoring junior students in mobile app development and web technologies.",
-    tags: ["Leadership", "Mentoring", "Events"],
+"Actively participating in technical workshops, coding events, and project-based learning while collaborating with classmates on software development projects.",
+    tags: ["Leadership", "Workshops", "Events"],
     icon: Users,
   },
   {
@@ -54,8 +55,8 @@ export const experiences: readonly TimelineEntry[] = [
     subtitle: "Academic Excellence",
     date: "2023 — 2027",
     description:
-      "Pursuing B.E. in Computer Science at Kings Engineering College, Anna University. Focusing on data structures, algorithms, machine learning, and software engineering principles.",
-    tags: ["Algorithms", "Data Structures", "Machine Learning"],
+  "Pursuing a Bachelor of Engineering in Computer Science at Kings Engineering College. Building a strong foundation in data structures, algorithms, software engineering, database systems, and artificial intelligence while applying these concepts through real-world projects.",
+    tags: ["Data Structures", "Algorithms", "Machine Learning", "Artificial Intelligence"],
     icon: GraduationCap,
   },
 ] as const;
