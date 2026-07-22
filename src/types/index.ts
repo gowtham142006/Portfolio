@@ -95,7 +95,7 @@ export interface Certification {
   readonly date: string;
   readonly description: string;
   readonly icon?: LucideIcon;
-  readonly url?: string;
+  readonly credentialUrl?: string;
   readonly badge?: string;
 }
 

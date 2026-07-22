@@ -40,14 +40,15 @@ export function CertificationsSection() {
               </p>
               <div className="flex items-center justify-between">
                 <time className="text-xs text-[var(--text-muted)]">{cert.date}</time>
-                {cert.url && (
+                {cert.credentialUrl && (
                   <a
-                    href={cert.url}
+                    href={cert.credentialUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-[var(--color-brand-primary)] hover:underline"
+                    className="mt-4 inline-flex items-center gap-2 rounded-lg border border-blue-500/20 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-500 transition-all hover:scale-105 hover:bg-blue-500 hover:text-white"
                   >
                     View Certificate →
+                    
                   </a>
                 )}
               </div>
