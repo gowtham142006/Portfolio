@@ -8,7 +8,8 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 /* ================================================================
    ANIMATED CURSOR — Client Component
-   Custom cursor glow that follows mouse. Desktop only.
+   Enhanced custom cursor glow with larger radius, softer glow,
+   and more dramatic interactive state. Desktop only.
    ================================================================ */
 
 export function AnimatedCursor() {
@@ -36,19 +37,23 @@ export function AnimatedCursor() {
   // Don't render on mobile or when reduced motion is preferred
   if (prefersReducedMotion || isMobile) return null;
 
+  const size = isPointer ? 64 : 40;
+
   return (
     <motion.div
       className="pointer-events-none fixed z-[var(--z-cursor)] mix-blend-screen"
       animate={{
-        x: x - (isPointer ? 24 : 16),
-        y: y - (isPointer ? 24 : 16),
-        width: isPointer ? 48 : 32,
-        height: isPointer ? 48 : 32,
+        x: x - size / 2,
+        y: y - size / 2,
+        width: size,
+        height: size,
         opacity: x === 0 && y === 0 ? 0 : 1,
       }}
       transition={{ type: "spring", stiffness: 500, damping: 28, mass: 0.5 }}
       style={{
-        background: "radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%)",
+        background: isPointer
+          ? "radial-gradient(circle, rgba(59,130,246,0.2) 0%, rgba(139,92,246,0.08) 40%, transparent 70%)"
+          : "radial-gradient(circle, rgba(59,130,246,0.12) 0%, rgba(139,92,246,0.04) 40%, transparent 70%)",
         borderRadius: "50%",
       }}
       aria-hidden="true"

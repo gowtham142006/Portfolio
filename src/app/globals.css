@@ -294,3 +294,324 @@ body {
     linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
 }
+
+/* ================================================================
+   PREMIUM ANIMATION KEYFRAMES
+   ================================================================ */
+
+/* Aurora drift — slow sweeping color bands */
+@keyframes aurora-drift {
+  0% { transform: translateX(-25%) translateY(-10%) rotate(-5deg); }
+  33% { transform: translateX(10%) translateY(5%) rotate(3deg); }
+  66% { transform: translateX(-15%) translateY(-5%) rotate(-2deg); }
+  100% { transform: translateX(-25%) translateY(-10%) rotate(-5deg); }
+}
+
+/* Blob floating — organic blob movement */
+@keyframes blob-float-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -20px) scale(1.05); }
+  50% { transform: translate(-20px, 15px) scale(0.95); }
+  75% { transform: translate(15px, 25px) scale(1.02); }
+}
+
+@keyframes blob-float-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(-25px, 20px) scale(0.97); }
+  50% { transform: translate(20px, -15px) scale(1.04); }
+  75% { transform: translate(-10px, -25px) scale(0.98); }
+}
+
+@keyframes blob-float-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(20px, 15px) scale(1.03); }
+  66% { transform: translate(-15px, -20px) scale(0.96); }
+}
+
+/* Noise shift — subtle noise texture animation */
+@keyframes noise-shift {
+  0% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -5%); }
+  20% { transform: translate(-10%, 5%); }
+  30% { transform: translate(5%, -10%); }
+  40% { transform: translate(-5%, 15%); }
+  50% { transform: translate(-10%, 5%); }
+  60% { transform: translate(15%, 0); }
+  70% { transform: translate(0, 10%); }
+  80% { transform: translate(-15%, 0); }
+  90% { transform: translate(10%, 5%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Shine sweep — gradient shine across buttons */
+@keyframes shine-sweep {
+  0% { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(200%) skewX(-15deg); }
+}
+
+/* Ripple — click ripple animation */
+@keyframes ripple-expand {
+  0% { transform: scale(0); opacity: 0.4; }
+  100% { transform: scale(4); opacity: 0; }
+}
+
+/* Glow pulse — subtle glow for cards/elements */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+/* Border rotate — rotating gradient border */
+@keyframes border-rotate {
+  0% { --border-angle: 0deg; }
+  100% { --border-angle: 360deg; }
+}
+
+/* Gentle float — idle card micro-animation */
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* Gradient ring rotation */
+@keyframes ring-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Scale pulse — subtle breathing */
+@keyframes scale-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Divider glow */
+@keyframes divider-glow {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* Spotlight follow — used with CSS custom properties */
+@keyframes spotlight-idle {
+  0%, 100% { opacity: 0.03; }
+  50% { opacity: 0.06; }
+}
+
+/* ================================================================
+   PREMIUM UTILITY CLASSES
+   ================================================================ */
+
+/* Noise overlay — organic texture via SVG filter */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  animation: noise-shift 8s steps(10) infinite;
+  will-change: transform;
+}
+
+[data-theme="light"] .noise-overlay {
+  opacity: 0.025;
+}
+
+/* Mouse spotlight — radial glow following cursor */
+.cursor-spotlight {
+  position: fixed;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    circle,
+    rgba(59, 130, 246, 0.06) 0%,
+    rgba(139, 92, 246, 0.03) 30%,
+    transparent 70%
+  );
+  transform: translate(-50%, -50%);
+  will-change: left, top;
+  transition: opacity 0.3s ease;
+}
+
+[data-theme="light"] .cursor-spotlight {
+  background: radial-gradient(
+    circle,
+    rgba(59, 130, 246, 0.04) 0%,
+    rgba(139, 92, 246, 0.02) 30%,
+    transparent 70%
+  );
+}
+
+/* Card spotlight — local mouse glow within card */
+.card-spotlight {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.group:hover .card-spotlight {
+  opacity: 1;
+}
+
+/* Animated gradient border */
+.animated-border {
+  position: relative;
+}
+
+.animated-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--border-angle, 0deg),
+    transparent 20%,
+    var(--color-brand-primary) 40%,
+    var(--color-brand-secondary) 60%,
+    transparent 80%
+  );
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.animated-border:hover::before {
+  opacity: 1;
+  animation: border-rotate 3s linear infinite;
+}
+
+/* Enhanced glass with better depth */
+.glass-premium {
+  background: rgba(17, 24, 39, 0.5);
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.02) inset,
+    0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="light"] .glass-premium {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+    0 8px 32px rgba(0, 0, 0, 0.06);
+}
+
+/* Button shine effect */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08),
+    transparent
+  );
+  transform: translateX(-100%) skewX(-15deg);
+}
+
+.btn-shine:hover::after {
+  animation: shine-sweep 0.8s ease forwards;
+}
+
+[data-theme="light"] .btn-shine::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+}
+
+/* Gradient ring — rotating gradient circle */
+.gradient-ring {
+  background: conic-gradient(
+    from 0deg,
+    var(--color-brand-primary),
+    var(--color-brand-secondary),
+    var(--color-brand-accent),
+    var(--color-brand-primary)
+  );
+  animation: ring-rotate 6s linear infinite;
+  will-change: transform;
+}
+
+/* Glow divider */
+.glow-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-brand-primary) 30%,
+    var(--color-brand-secondary) 50%,
+    var(--color-brand-primary) 70%,
+    transparent
+  );
+  opacity: 0.5;
+  animation: divider-glow 4s ease-in-out infinite;
+}
+
+/* Section reveal blur */
+.section-reveal {
+  will-change: transform, opacity, filter;
+}
+
+/* Floating idle animation for cards */
+.float-idle {
+  animation: float-gentle 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* ================================================================
+   ENHANCED REDUCED MOTION — covers new animations
+   ================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .noise-overlay,
+  .cursor-spotlight {
+    display: none !important;
+  }
+
+  .animated-border::before,
+  .btn-shine::after {
+    animation: none !important;
+  }
+
+  .float-idle {
+    animation: none !important;
+  }
+
+  .gradient-ring {
+    animation: none !important;
+  }
+
+  .glow-divider {
+    animation: none !important;
+  }
+}

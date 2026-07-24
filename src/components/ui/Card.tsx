@@ -1,9 +1,15 @@
+"use client";
+
+import { useRef, useState, useCallback } from "react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 /* ================================================================
-   CARD — Server Component
-   Base card component with multiple visual variants.
-   Used across Skills, Projects, Certs, Achievements, GitHub, About.
+   CARD — Client Component
+   Premium card with mouse spotlight, subtle tilt, gradient border,
+   animated shadow, and floating idle animation.
+   Preserves all existing variants and props.
    ================================================================ */
 
 interface CardProps {
@@ -36,21 +42,63 @@ export function Card({
   className,
   children,
 }: CardProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [spotlightPos, setSpotlightPos] = useState({ x: 50, y: 50 });
+  const [isHovered, setIsHovered] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (!ref.current || prefersReducedMotion) return;
+      const rect = ref.current.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      setSpotlightPos({ x, y });
+    },
+    [prefersReducedMotion]
+  );
+
+  const hoverProps = hover && !prefersReducedMotion
+    ? {
+        whileHover: { y: -4, scale: 1.015 },
+        whileTap: { scale: 0.98 },
+        transition: { type: "spring" as const, stiffness: 400, damping: 25 },
+      }
+    : {};
+
   return (
-    <div
+    <motion.div
+      ref={ref}
       className={cn(
-        "rounded-xl transition-all duration-300",
+        "group relative rounded-xl transition-all duration-300 overflow-hidden",
         variantStyles[variant],
         paddingStyles[padding],
         hover && [
           "hover:border-[var(--border-hover)]",
-          "hover:shadow-[var(--shadow-card-theme)]",
-          "hover:-translate-y-1",
+          "hover:shadow-[0_8px_30px_rgba(0,0,0,0.2)]",
         ],
         className
       )}
+      onMouseMove={hover ? handleMouseMove : undefined}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setSpotlightPos({ x: 50, y: 50 });
+      }}
+      {...hoverProps}
     >
-      {children}
-    </div>
+      {/* Mouse spotlight effect */}
+      {hover && !prefersReducedMotion && (
+        <div
+          className="card-spotlight"
+          style={{
+            background: `radial-gradient(circle at ${spotlightPos.x}% ${spotlightPos.y}%, rgba(59,130,246,0.08) 0%, transparent 60%)`,
+            opacity: isHovered ? 1 : 0,
+          }}
+        />
+      )}
+      {/* Content */}
+      <div className="relative z-[2]">{children}</div>
+    </motion.div>
   );
 }

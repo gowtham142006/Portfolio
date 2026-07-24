@@ -1,12 +1,15 @@
 "use client";
 
 import { forwardRef } from "react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import type { LucideIcon } from "lucide-react";
 
 /* ================================================================
    BUTTON — Client Component (event handlers)
-   Unified button with multiple variants, sizes, and effects.
+   Unified button with multiple variants, sizes, micro-interactions,
+   shine effects, and magnetic spring feedback.
    Renders as <a> when href is provided.
    ================================================================ */
 
@@ -54,13 +57,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) {
+    const prefersReducedMotion = useReducedMotion();
+
     const classes = cn(
-      "inline-flex items-center justify-center rounded-xl font-medium transition-all duration-300",
+      "relative inline-flex items-center justify-center rounded-xl font-medium transition-all duration-300 btn-shine cursor-pointer",
       "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-brand-primary)]",
-      "active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none",
+      "disabled:opacity-50 disabled:pointer-events-none",
       variantStyles[variant],
       sizeStyles[size],
-      glow && "hover:shadow-[var(--shadow-glow)]",
+      glow && "hover:shadow-[0_0_25px_rgba(59,130,246,0.3)]",
       className
     );
 
@@ -78,23 +83,37 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       </>
     );
 
+    const motionProps = prefersReducedMotion
+      ? {}
+      : {
+          whileHover: { scale: 1.02 },
+          whileTap: { scale: 0.97 },
+          transition: { type: "spring" as const, stiffness: 400, damping: 20 },
+        };
+
     if (href) {
       return (
-        <a
+        <motion.a
           href={href}
           target={target}
           rel={target === "_blank" ? "noopener noreferrer" : undefined}
           className={classes}
+          {...motionProps}
         >
           {content}
-        </a>
+        </motion.a>
       );
     }
 
     return (
-      <button ref={ref} className={classes} {...props}>
+      <motion.button
+        ref={ref}
+        className={classes}
+        {...(props as object)}
+        {...motionProps}
+      >
         {content}
-      </button>
+      </motion.button>
     );
   }
 );

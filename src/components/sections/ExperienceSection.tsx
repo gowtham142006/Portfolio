@@ -1,10 +1,12 @@
+"use client";
+
 import { experiences } from "@/data/experience";
 import { SectionShell } from "@/components/ui/SectionShell";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Timeline } from "@/components/ui/Timeline";
 
 /* ================================================================
-   EXPERIENCE SECTION — Server Component
+   EXPERIENCE SECTION — Client Component
    Uses the reusable Timeline component.
    ================================================================ */
 

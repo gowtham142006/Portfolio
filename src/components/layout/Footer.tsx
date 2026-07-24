@@ -1,10 +1,17 @@
+"use client";
+
+import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
 import { personal } from "@/data/personal";
 import { navItems } from "@/data/navigation";
 import { GradientText } from "@/components/ui/GradientText";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { DURATION, EASE } from "@/lib/animations";
 
 /* ================================================================
-   FOOTER — Server Component
-   Simple footer with logo, navigation, social links, copyright.
+   FOOTER — Client Component
+   Animated footer with scroll reveal, glow divider, floating
+   social icons, and staggered entrance.
    ================================================================ */
 
 /* Brand SVG icons for GitHub and LinkedIn */
@@ -34,13 +41,25 @@ function SocialIcon({ name, className }: { name: string; className?: string }) {
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const ref = useRef<HTMLElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const prefersReducedMotion = useReducedMotion();
 
   return (
-    <footer className="border-t border-[var(--border)] bg-[var(--surface)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <footer ref={ref} className="border-t border-[var(--border)] bg-[var(--surface)]">
+      <motion.div
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
+        initial={prefersReducedMotion ? {} : { opacity: 0, y: 30 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: DURATION.slow, ease: EASE.smooth }}
+      >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Logo & tagline */}
-          <div>
+          <motion.div
+            initial={prefersReducedMotion ? {} : { opacity: 0, y: 15 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: DURATION.normal, ease: EASE.smooth, delay: 0.1 }}
+          >
             <a href="#hero" className="font-[family-name:var(--font-heading)] text-xl font-bold">
               <GradientText>{personal.name.split(" ")[0]}</GradientText>
               <span className="text-[var(--text-muted)]">.</span>
@@ -48,10 +67,14 @@ export function Footer() {
             <p className="mt-3 text-sm text-[var(--text-secondary)] max-w-xs">
               {personal.tagline}
             </p>
-          </div>
+          </motion.div>
 
           {/* Navigation */}
-          <div>
+          <motion.div
+            initial={prefersReducedMotion ? {} : { opacity: 0, y: 15 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: DURATION.normal, ease: EASE.smooth, delay: 0.2 }}
+          >
             <h3 className="font-[family-name:var(--font-heading)] text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-4">
               Navigation
             </h3>
@@ -60,17 +83,21 @@ export function Footer() {
                 <li key={item.href}>
                   <a
                     href={item.href}
-                    className="text-sm text-[var(--text-secondary)] hover:text-[var(--foreground)] transition-colors"
+                    className="text-sm text-[var(--text-secondary)] hover:text-[var(--foreground)] hover:translate-x-1 inline-block transition-all duration-300"
                   >
                     {item.label}
                   </a>
                 </li>
               ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* Socials */}
-          <div>
+          <motion.div
+            initial={prefersReducedMotion ? {} : { opacity: 0, y: 15 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: DURATION.normal, ease: EASE.smooth, delay: 0.3 }}
+          >
             <h3 className="font-[family-name:var(--font-heading)] text-sm font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-4">
               Connect
             </h3>
@@ -78,38 +105,47 @@ export function Footer() {
               {personal.socials
                 .filter((s) => s.name === "GitHub" || s.name === "LinkedIn")
                 .map((social) => (
-                  <a
+                  <motion.a
                     key={social.name}
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={social.label}
-                    className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--foreground)] hover:bg-[var(--card)] transition-colors"
+                    className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--foreground)] hover:bg-[var(--card)] transition-all duration-300"
+                    whileHover={prefersReducedMotion ? {} : { y: -3, scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     <SocialIcon name={social.name} />
-                  </a>
+                  </motion.a>
                 ))}
-              <a
+              <motion.a
                 href={`mailto:${personal.email}`}
                 aria-label="Send an email"
-                className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--foreground)] hover:bg-[var(--card)] transition-colors"
+                className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--foreground)] hover:bg-[var(--card)] transition-all duration-300"
+                whileHover={prefersReducedMotion ? {} : { y: -3, scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
                   <rect x="2" y="4" width="20" height="16" rx="2" />
                   <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                 </svg>
-              </a>
+              </motion.a>
             </div>
-          </div>
+          </motion.div>
         </div>
 
-        {/* Divider + Copyright */}
-        <div className="section-divider mt-8 mb-6" />
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[var(--text-muted)]">
+        {/* Glow Divider */}
+        <div className="glow-divider mt-8 mb-6" />
+        <motion.div
+          className="flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[var(--text-muted)]"
+          initial={prefersReducedMotion ? {} : { opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ duration: DURATION.normal, delay: 0.5 }}
+        >
           <p>© {currentYear} {personal.name}. All rights reserved.</p>
           <p>Built with Next.js, TypeScript & Framer Motion</p>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </footer>
   );
 }

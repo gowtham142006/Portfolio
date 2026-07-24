@@ -1,14 +1,22 @@
+"use client";
+
+import { useRef, useState, useCallback } from "react";
 import Image from "next/image";
+import { motion, useInView } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import { projects } from "@/data/projects";
 import { SectionShell } from "@/components/ui/SectionShell";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { TiltCard } from "@/components/motion/TiltCard";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { DURATION, EASE } from "@/lib/animations";
 
 /* ================================================================
-   PROJECTS SECTION — Server Component
-   Featured project cards with images, descriptions, and tech stacks.
+   PROJECTS SECTION — Client Component
+   Featured project cards with image parallax, tilt, gradient
+   overlays, animated tech badges, and hover button reveal.
    ================================================================ */
 
 /* GitHub SVG icon */
@@ -20,7 +28,124 @@ function GitHubSmallIcon() {
   );
 }
 
+/* Interactive project card with parallax image */
+function ProjectCard({
+  project,
+  index,
+  isInView,
+}: {
+  project: (typeof projects)[number];
+  index: number;
+  isInView: boolean;
+}) {
+  const prefersReducedMotion = useReducedMotion();
+  const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
+
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLElement>) => {
+      if (prefersReducedMotion) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      setMousePos({
+        x: (e.clientX - rect.left) / rect.width,
+        y: (e.clientY - rect.top) / rect.height,
+      });
+    },
+    [prefersReducedMotion]
+  );
+
+  return (
+    <motion.div
+      initial={prefersReducedMotion ? {} : { opacity: 0, y: 40, filter: "blur(6px)" }}
+      animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
+      transition={{
+        duration: DURATION.slow,
+        ease: EASE.smooth,
+        delay: index * 0.15,
+      }}
+    >
+      <TiltCard tiltAmount={6} className="h-full">
+        <article
+          className="group relative rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden hover:border-[var(--border-hover)] transition-all duration-500 h-full animated-border"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={() => setMousePos({ x: 0.5, y: 0.5 })}
+        >
+          {/* Mouse spotlight */}
+          <div
+            className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-[1]"
+            style={{
+              background: `radial-gradient(circle at ${mousePos.x * 100}% ${mousePos.y * 100}%, rgba(59,130,246,0.06) 0%, transparent 50%)`,
+            }}
+          />
+
+          {/* Image with parallax */}
+          <div className="relative h-48 sm:h-56 overflow-hidden">
+            <motion.div
+              className="absolute inset-0"
+              animate={
+                prefersReducedMotion
+                  ? {}
+                  : {
+                      x: (mousePos.x - 0.5) * -10,
+                      y: (mousePos.y - 0.5) * -10,
+                      scale: 1.05,
+                    }
+              }
+              transition={{ type: "spring", stiffness: 150, damping: 20 }}
+            >
+              <Image
+                src={project.image}
+                alt={`${project.title} screenshot`}
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
+            </motion.div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[var(--card)] via-[var(--card)]/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" aria-hidden="true" />
+          </div>
+
+          {/* Content */}
+          <div className="relative p-6 z-[2]">
+            <h3 className="font-[family-name:var(--font-heading)] text-xl font-bold mb-2 group-hover:text-[var(--color-brand-primary)] transition-colors duration-300">
+              {project.title}
+            </h3>
+            <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-4 line-clamp-2">
+              {project.description}
+            </p>
+
+            {/* Tech stack */}
+            <div className="flex flex-wrap gap-2 mb-5">
+              {project.techStack.map((tech) => (
+                <Badge key={tech} variant="primary" size="sm">{tech}</Badge>
+              ))}
+            </div>
+
+            {/* Links — slide up on hover */}
+            <div className="flex items-center gap-3 transition-all duration-300 translate-y-2 opacity-70 group-hover:translate-y-0 group-hover:opacity-100">
+              {project.github && (
+                <Button variant="ghost" size="sm" href={project.github} target="_blank">
+                  <GitHubSmallIcon />
+                  Code
+                </Button>
+              )}
+              {project.demo && project.demo !== "#" && project.demo !== "" && (
+                <Button variant="ghost" size="sm" href={project.demo} target="_blank">
+                  Demo
+                  <ExternalLink size={14} className="ml-1.5" />
+                </Button>
+              )}
+            </div>
+          </div>
+        </article>
+      </TiltCard>
+    </motion.div>
+  );
+}
+
 export function ProjectsSection() {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const prefersReducedMotion = useReducedMotion();
+
   const featured = projects.filter((p) => p.featured);
   const other = projects.filter((p) => !p.featured);
 
@@ -33,57 +158,9 @@ export function ProjectsSection() {
       />
 
       {/* Featured projects — large cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-        {featured.map((project) => (
-          <article
-            key={project.slug}
-            className="group relative rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden hover:border-[var(--border-hover)] hover:shadow-[var(--shadow-card-theme)] transition-all duration-300 hover:-translate-y-1"
-          >
-            {/* Image */}
-            <div className="relative h-48 sm:h-56 overflow-hidden">
-              <Image
-                src={project.image}
-                alt={`${project.title} screenshot`}
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[var(--card)] to-transparent" aria-hidden="true" />
-            </div>
-
-            {/* Content */}
-            <div className="p-6">
-              <h3 className="font-[family-name:var(--font-heading)] text-xl font-bold mb-2">
-                {project.title}
-              </h3>
-              <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-4 line-clamp-2">
-                {project.description}
-              </p>
-
-              {/* Tech stack */}
-              <div className="flex flex-wrap gap-2 mb-5">
-                {project.techStack.map((tech) => (
-                  <Badge key={tech} variant="primary" size="sm">{tech}</Badge>
-                ))}
-              </div>
-
-              {/* Links */}
-              <div className="flex items-center gap-3">
-                {project.github && (
-                  <Button variant="ghost" size="sm" href={project.github} target="_blank">
-                    <GitHubSmallIcon />
-                    Code
-                  </Button>
-                )}
-                {project.demo && project.demo !== "#" && (
-                  <Button variant="ghost" size="sm" href={project.demo} target="_blank">
-                    Demo
-                    <ExternalLink size={14} className="ml-1.5" />
-                  </Button>
-                )}
-              </div>
-            </div>
-          </article>
+      <div ref={ref} className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        {featured.map((project, i) => (
+          <ProjectCard key={project.slug} project={project} index={i} isInView={isInView} />
         ))}
       </div>
 
@@ -94,12 +171,19 @@ export function ProjectsSection() {
             Other Projects
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {other.map((project) => (
-              <article
+            {other.map((project, i) => (
+              <motion.article
                 key={project.slug}
-                className="group rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 hover:border-[var(--border-hover)] hover:shadow-[var(--shadow-card-theme)] transition-all duration-300 hover:-translate-y-1"
+                className="group rounded-xl border border-[var(--border)] bg-[var(--card)] p-5 hover:border-[var(--border-hover)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.15)] transition-all duration-300 hover:-translate-y-1 animated-border"
+                initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{
+                  duration: DURATION.normal,
+                  ease: EASE.smooth,
+                  delay: 0.3 + i * 0.1,
+                }}
               >
-                <h4 className="font-[family-name:var(--font-heading)] text-base font-semibold mb-2">
+                <h4 className="font-[family-name:var(--font-heading)] text-base font-semibold mb-2 group-hover:text-[var(--color-brand-primary)] transition-colors duration-300">
                   {project.title}
                 </h4>
                 <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-4 line-clamp-2">
@@ -117,14 +201,14 @@ export function ProjectsSection() {
                       Code
                     </Button>
                   )}
-                  {project.demo && project.demo !== "#" && (
+                  {project.demo && project.demo !== "#" && project.demo !== "" && (
                     <Button variant="ghost" size="sm" href={project.demo} target="_blank">
                       Demo
                       <ExternalLink size={14} className="ml-1.5" />
                     </Button>
                   )}
                 </div>
-              </article>
+              </motion.article>
             ))}
           </div>
         </>

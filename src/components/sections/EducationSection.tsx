@@ -1,10 +1,12 @@
+"use client";
+
 import { education } from "@/data/education";
 import { SectionShell } from "@/components/ui/SectionShell";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Timeline } from "@/components/ui/Timeline";
 
 /* ================================================================
-   EDUCATION SECTION — Server Component
+   EDUCATION SECTION — Client Component
    Uses the reusable Timeline component.
    ================================================================ */
 
