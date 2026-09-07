@@ -8,8 +8,8 @@ import { personal } from "@/data/personal";
 import { Button } from "@/components/ui/Button";
 import { GradientText } from "@/components/ui/GradientText";
 import { TextReveal } from "@/components/motion/TextReveal";
-import { FloatingElement } from "@/components/motion/FloatingElement";
 import { MagneticWrap } from "@/components/motion/MagneticWrap";
+import { HeroScene3D } from "@/components/3d/HeroScene3D";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { useMousePosition } from "@/hooks/useMousePosition";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
@@ -17,9 +17,9 @@ import { DURATION, EASE } from "@/lib/animations";
 
 /* ================================================================
    HERO SECTION — Client Component
-   Full-viewport hero with floating profile image, 3D depth,
-   role rotation, glassmorphism badge, animated geometric shapes,
-   gradient light beams, and mouse-reactive spotlight.
+   Full-viewport hero with 3D WebGL environment, floating profile
+   image with 3D tilt, role rotation, glassmorphism badge, and
+   interactive depth effects.
    ================================================================ */
 
 /* Role rotation hook */
@@ -63,8 +63,16 @@ export function HeroSection() {
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   // Mouse-reactive spotlight offset (subtle parallax)
-  const spotlightX = isMobile ? 0 : (x - (typeof window !== "undefined" ? window.innerWidth / 2 : 0)) * 0.02;
-  const spotlightY = isMobile ? 0 : (y - (typeof window !== "undefined" ? window.innerHeight / 2 : 0)) * 0.02;
+  // Only compute when mouse has actually moved (x/y !== 0) to avoid hydration mismatch
+  const hasMouseMoved = x !== 0 || y !== 0;
+  const spotlightX = isMobile || !hasMouseMoved ? 0 : (x - window.innerWidth / 2) * 0.02;
+  const spotlightY = isMobile || !hasMouseMoved ? 0 : (y - window.innerHeight / 2) * 0.02;
+
+  // Profile tilt transform — only applied after mouse interaction to avoid SSR mismatch
+  const profileTilt =
+    isMobile || prefersReducedMotion || !hasMouseMoved
+      ? undefined
+      : `rotateY(${spotlightX * 0.3}deg) rotateX(${-spotlightY * 0.3}deg)`;
 
   const stagger = useCallback(
     (i: number) => ({
@@ -81,100 +89,45 @@ export function HeroSection() {
       className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8"
       aria-label="Introduction"
     >
-      {/* ---- DECORATIVE LAYERS ---- */}
+      {/* ---- 3D WEBGL ENVIRONMENT ---- */}
+      <HeroScene3D />
 
-      {/* Gradient light beam */}
-      {!prefersReducedMotion && (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-          {/* Vertical beam */}
-          <div
-            className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-[60%] opacity-[0.08]"
-            style={{
-              background: "linear-gradient(to bottom, var(--color-brand-primary), transparent)",
-            }}
-          />
-          {/* Angled beam left */}
-          <div
-            className="absolute top-0 left-[30%] w-[1px] h-[40%] opacity-[0.04] rotate-[15deg] origin-top"
-            style={{
-              background: "linear-gradient(to bottom, var(--color-brand-secondary), transparent)",
-            }}
-          />
-          {/* Angled beam right */}
-          <div
-            className="absolute top-0 right-[30%] w-[1px] h-[40%] opacity-[0.04] -rotate-[15deg] origin-top"
-            style={{
-              background: "linear-gradient(to bottom, var(--color-brand-accent), transparent)",
-            }}
-          />
-        </div>
-      )}
-
-      {/* Floating gradient orbs */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        <FloatingElement duration={8} distance={20} delay={0}>
-          <div className="absolute top-1/4 left-1/4 w-72 h-72 rounded-full bg-[var(--color-brand-primary)]/5 blur-[100px]" />
-        </FloatingElement>
-        <FloatingElement duration={10} distance={15} delay={2}>
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-[var(--color-brand-secondary)]/5 blur-[120px]" />
-        </FloatingElement>
-        <FloatingElement duration={12} distance={25} delay={4}>
-          <div className="absolute top-1/2 right-1/3 w-64 h-64 rounded-full bg-[var(--color-brand-accent)]/5 blur-[80px]" />
-        </FloatingElement>
-      </div>
-
-      {/* Floating geometric shapes */}
-      {!prefersReducedMotion && (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-          {/* Rotating ring */}
-          <FloatingElement duration={14} distance={8} delay={1}>
-            <div className="absolute top-[20%] right-[15%] w-16 h-16 md:w-24 md:h-24 rounded-full border border-[var(--color-brand-primary)]/10 opacity-40"
-              style={{ animation: "ring-rotate 20s linear infinite" }}
-            />
-          </FloatingElement>
-          {/* Small gradient circle */}
-          <FloatingElement duration={10} distance={12} delay={3}>
-            <div className="absolute bottom-[30%] left-[12%] w-6 h-6 md:w-8 md:h-8 rounded-full bg-gradient-to-r from-[var(--color-brand-primary)]/20 to-[var(--color-brand-secondary)]/20 blur-[1px]" />
-          </FloatingElement>
-          {/* Gradient line */}
-          <FloatingElement duration={16} distance={6} delay={5}>
-            <div className="absolute top-[40%] left-[8%] w-16 md:w-24 h-[1px] bg-gradient-to-r from-transparent via-[var(--color-brand-primary)]/15 to-transparent rotate-45" />
-          </FloatingElement>
-          {/* Dot */}
-          <FloatingElement duration={9} distance={10} delay={2}>
-            <div className="absolute bottom-[25%] right-[10%] w-2 h-2 rounded-full bg-[var(--color-brand-accent)]/30" />
-          </FloatingElement>
-        </div>
-      )}
-
-      {/* Mouse-reactive spotlight */}
-      {!prefersReducedMotion && !isMobile && (
-        <motion.div
-          className="absolute pointer-events-none w-[500px] h-[500px] rounded-full opacity-[0.04]"
-          style={{
-            background: "radial-gradient(circle, var(--color-brand-primary), transparent 70%)",
-            filter: "blur(40px)",
-          }}
-          animate={{ x: spotlightX, y: spotlightY }}
-          transition={{ type: "spring", stiffness: 50, damping: 20 }}
-          aria-hidden="true"
-        />
-      )}
+      {/* Gradient atmosphere overlay for text readability */}
+      <div
+        className="absolute inset-0 pointer-events-none z-[1]"
+        aria-hidden="true"
+        style={{
+          background: "radial-gradient(ellipse at center, transparent 30%, var(--background) 80%)",
+        }}
+      />
 
       {/* ---- MAIN CONTENT ---- */}
       <div className="relative z-10 max-w-5xl mx-auto text-center">
-        {/* Profile image with gradient ring */}
+        {/* Profile image with 3D tilt and gradient ring */}
         <motion.div {...stagger(0)} className="mb-8 flex justify-center">
           <MagneticWrap strength={0.15}>
-            <div className="relative group">
+            <div
+              className="relative group profile-3d-tilt"
+              style={{
+                transform: profileTilt,
+                transition: "transform 0.3s ease-out",
+              }}
+            >
               {/* Animated gradient ring */}
               <div className="absolute -inset-[3px] rounded-full gradient-ring opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
-              {/* Glow */}
+              {/* Ambient glow — always subtly visible */}
               <div
-                className="absolute -inset-4 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+                className="absolute -inset-5 rounded-full opacity-30 group-hover:opacity-60 transition-opacity duration-700"
                 style={{
-                  background: "radial-gradient(circle, rgba(59,130,246,0.15), transparent 70%)",
-                  filter: "blur(15px)",
+                  background: "radial-gradient(circle, rgba(59,130,246,0.2), rgba(139,92,246,0.1) 50%, transparent 70%)",
+                  filter: "blur(18px)",
+                }}
+              />
+              {/* Depth shadow */}
+              <div
+                className="absolute -inset-1 rounded-full opacity-20"
+                style={{
+                  boxShadow: "0 12px 40px rgba(59,130,246,0.3), 0 4px 16px rgba(139,92,246,0.2)",
                 }}
               />
               {/* Glass backing */}
@@ -190,6 +143,14 @@ export function HeroSection() {
                 {/* Light reflection */}
                 <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
+              {/* Subtle reflection below */}
+              <div
+                className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-20 h-4 rounded-full opacity-10"
+                style={{
+                  background: "radial-gradient(ellipse, var(--color-brand-primary), transparent 70%)",
+                  filter: "blur(6px)",
+                }}
+              />
             </div>
           </MagneticWrap>
         </motion.div>

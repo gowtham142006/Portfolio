@@ -589,6 +589,24 @@ body {
 }
 
 /* ================================================================
+   3D SCENE UTILITIES
+   ================================================================ */
+
+/* 3D scene wrapper — fixed behind all content */
+.scene-3d-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Profile image 3D tilt container */
+.profile-3d-tilt {
+  transform-style: preserve-3d;
+  perspective: 800px;
+}
+
+/* ================================================================
    ENHANCED REDUCED MOTION — covers new animations
    ================================================================ */
 
@@ -613,5 +631,9 @@ body {
 
   .glow-divider {
     animation: none !important;
+  }
+
+  .scene-3d-wrapper {
+    opacity: 0.5 !important;
   }
 }
